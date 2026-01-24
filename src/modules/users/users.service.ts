@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaClient } from 'generated/prisma/client'; 
 import CreateUserDto from './dto/create-user.dto';
+import { hash } from 'bcrypt';
 
 @Injectable()
 export default class UsersService {
@@ -25,14 +26,17 @@ export default class UsersService {
       throw new ConflictException('Usuário já registrado');
     }
 
+    const hashedPassword = await hash(user.password, 10);
+
     const newUser = await this.prisma.user.create({
       data: {
         name: user.name,
         email: user.email,
-        password: user.password,
+        password: hashedPassword,
       },
     });
 
-    return newUser;
+    const { password, ...userWithoutPassword } = newUser;
+    return userWithoutPassword;
   }
 }
