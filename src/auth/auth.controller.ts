@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Header, Headers, Post } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import AuthDto from './dto/auth.dto';
 import { AuthService } from './auth.service';
@@ -13,5 +13,11 @@ export class AuthController {
   @Post('login')
   async login(@Body() user: AuthDto) {
     return await this.authService.login(user);
+  }
+
+  @Get('token/validate')
+  async validateToken(@Headers('Authorization') token: string) {
+    const tokenWithoutBearer = token.split(' ')[1];
+    return await this.authService.validateToken(tokenWithoutBearer);
   }
 }
