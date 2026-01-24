@@ -1,98 +1,249 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# My Finance Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend NestJS para aplicação de gestão financeira pessoal.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📚 Documentação
 
-## Description
+- **[Arquitetura](./docs/ARCHITECTURE.md)**: Visão geral da arquitetura, módulos, fluxos e padrões
+- **[Guia do Desenvolvedor](./docs/DEVELOPER_GUIDE.md)**: Setup, padrões de código, e melhores práticas
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+## 🚀 Quick Start
 
 ```bash
-$ yarn install
+# Instalar dependências
+yarn install
+
+# Configurar ambiente
+cp .env.example .env
+# Edite .env com suas configurações
+
+# Executar migrations
+npx prisma migrate dev
+
+# Iniciar servidor de desenvolvimento
+yarn start:dev
 ```
 
-## Compile and run the project
+O servidor estará disponível em `http://localhost:3000`
+
+Documentação Swagger: `http://localhost:3000/api/docs`
+
+## 🛠️ Stack Tecnológica
+
+- **Framework**: NestJS 11.x
+- **Linguagem**: TypeScript 5.9
+- **ORM**: Prisma 7.3
+- **Banco de Dados**: PostgreSQL
+- **Autenticação**: JWT + Passport
+- **Validação**: class-validator
+- **Documentação**: Swagger/OpenAPI
+- **Testes**: Jest
+
+## 📁 Estrutura do Projeto
+
+```
+backend/
+├── prisma/              # Schema e migrations do banco
+├── src/
+│   ├── auth/            # Autenticação e autorização
+│   ├── modules/         # Módulos de domínio
+│   │   ├── account/     # Gestão de contas
+│   │   └── users/       # Gestão de usuários
+│   ├── prisma/          # Módulo Prisma
+│   └── main.ts          # Entry point
+├── test/                # Testes E2E
+└── docs/                # Documentação
+```
+
+## 🔐 Autenticação
+
+A aplicação usa JWT para autenticação. Todas as rotas são protegidas por padrão, exceto:
+
+- `POST /api/auth/login` - Login
+- `POST /api/account` - Criar conta
+
+### Exemplo de Login
 
 ```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "senha123"
+  }'
 ```
 
-## Run tests
+Resposta:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### Usando o Token
 
 ```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+curl -X GET http://localhost:3000/api/users \
+  -H "Authorization: Bearer <seu-token>"
 ```
 
-## Deployment
+## 🗄️ Banco de Dados
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Modelo de Dados
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- **Account**: Conta organizacional
+- **User**: Usuário do sistema
+- **Role**: ADMIN | USER
+
+### Comandos Prisma
 
 ```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
+# Gerar cliente Prisma
+npx prisma generate
+
+# Criar migration
+npx prisma migrate dev --name nome_da_migration
+
+# Aplicar migrations (produção)
+npx prisma migrate deploy
+
+# Abrir Prisma Studio (GUI)
+npx prisma studio
+
+# Reset database (desenvolvimento)
+npx prisma migrate reset
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 🧪 Testes
 
-## Resources
+```bash
+# Unit tests
+yarn test
 
-Check out a few resources that may come in handy when working with NestJS:
+# E2E tests
+yarn test:e2e
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# Coverage
+yarn test:cov
 
-## Support
+# Watch mode
+yarn test:watch
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 📝 Scripts Disponíveis
 
-## Stay in touch
+```bash
+# Desenvolvimento
+yarn start:dev          # Watch mode
+yarn start:debug        # Debug mode
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Build
+yarn build              # Compilar TypeScript
 
-## License
+# Produção
+yarn start:prod         # Executar build
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Qualidade de Código
+yarn lint               # ESLint
+yarn format             # Prettier
+```
+
+## 🌍 Variáveis de Ambiente
+
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/my_financy"
+
+# JWT
+JWT_SECRET="your-secret-key-here"
+
+# Server (opcional)
+PORT=3000
+```
+
+> **Dica**: Use `openssl rand -base64 32` para gerar um JWT_SECRET seguro.
+
+## 📡 API Endpoints
+
+### Autenticação
+
+- `POST /api/auth/login` - Login (público)
+
+### Contas
+
+- `POST /api/account` - Criar conta (público)
+
+### Usuários
+
+- `POST /api/users` - Criar usuário (requer ADMIN)
+
+Para documentação completa da API, acesse: `http://localhost:3000/api/docs`
+
+## 🔒 Segurança
+
+- **JWT**: Autenticação baseada em tokens
+- **bcrypt**: Hashing de senhas (10 salt rounds)
+- **Rate Limiting**: Proteção contra brute force
+  - Global: 10 req/min
+  - Login: 5 req/min
+- **Guards**: AuthGuard (JWT) e RolesGuard (RBAC)
+- **Validation**: Validação automática de DTOs
+
+## 👥 Controle de Acesso
+
+### Roles
+
+- **ADMIN**: Acesso completo (criar usuários, etc)
+- **USER**: Acesso padrão
+
+### Decorators
+
+```typescript
+@Public()              // Rota pública
+@Roles(Role.ADMIN)     // Requer role ADMIN
+```
+
+## 🏗️ Arquitetura
+
+A aplicação segue uma arquitetura modular baseada em domínios:
+
+- **Módulos**: Organizados por domínio de negócio
+- **Services**: Lógica de negócio
+- **Controllers**: Rotas HTTP
+- **DTOs**: Validação de dados
+- **Guards**: Autenticação e autorização
+- **Prisma**: Acesso ao banco de dados
+
+Para detalhes completos, consulte [ARCHITECTURE.md](./docs/ARCHITECTURE.md)
+
+## 📖 Guia de Desenvolvimento
+
+Para informações sobre:
+- Setup do ambiente
+- Padrões de código
+- Criação de módulos
+- Testes
+- Git workflow
+
+Consulte o [Guia do Desenvolvedor](./docs/DEVELOPER_GUIDE.md)
+
+## 🤝 Contribuindo
+
+1. Crie uma branch: `git checkout -b feature/minha-feature`
+2. Faça suas alterações
+3. Commit: `git commit -m "feat: adiciona nova funcionalidade"`
+4. Push: `git push origin feature/minha-feature`
+5. Abra um Pull Request
+
+Siga o [Conventional Commits](https://www.conventionalcommits.org/) para mensagens de commit.
+
+## 📄 Licença
+
+UNLICENSED - Uso privado
+
+## 📞 Suporte
+
+- Documentação: [./docs](./docs)
+- Issues: [GitHub Issues]
+- NestJS: [https://docs.nestjs.com](https://docs.nestjs.com)
+- Prisma: [https://www.prisma.io/docs](https://www.prisma.io/docs)
