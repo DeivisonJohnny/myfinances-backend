@@ -8,23 +8,29 @@ datasource db {
 }
 
 model Account {
-  id      String @id @default(cuid())
-  name    String
+  id    String @id @default(cuid())
+  name  String
   email String @unique
 
   users User[]
 }
 
 model User {
-  id    String @id @default(cuid())
-  email String @unique
-  name  String
-  password  String
+  id       String @id @default(cuid())
+  email    String @unique
+  name     String
+  password String
 
   role Role @default(USER)
 
   account   Account? @relation(fields: [accountId], references: [id])
   accountId String?
+}
+
+model CategoryExpenses {
+  id String @id @default(cuid())
+
+  name String
 }
 
 enum Role {
