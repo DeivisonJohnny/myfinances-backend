@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { PrismaClient } from 'generated/prisma/client';
 import Utils from 'src/common/utils/Utils';
-import CategoryExpensesDto from './dto/category-expenses.dto';
+import CategoryExpensesDto from './dto/category-expenses-create.dto';
 
 @Injectable()
 export class CategoryExpensesService {

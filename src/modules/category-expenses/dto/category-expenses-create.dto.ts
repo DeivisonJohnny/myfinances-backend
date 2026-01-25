@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 
-export default class CategoryExpensesDto {
+export default class CategoryExpensesCreateDto {
   @IsString({ message: 'O nome deve ser um texto' })
   @IsNotEmpty({ message: 'O nome é obrigatório' })
   @MinLength(3, { message: 'O nome deve ter no mínimo 3 caracteres' })
