@@ -10,6 +10,7 @@ import AccountModule from './modules/account/account.module';
 import { AuthGuard } from './auth/guards/auth.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { CategoryExpensesModule } from './modules/category-expenses/category-expenses.module';
+import { ExpensesModule } from './modules/expenses/expenses.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CategoryExpensesModule } from './modules/category-expenses/category-exp
     AccountModule,
     AuthModule,
     CategoryExpensesModule,
+    ExpensesModule,
   ],
   controllers: [AppController],
   providers: [
