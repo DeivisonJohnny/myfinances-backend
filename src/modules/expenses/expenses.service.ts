@@ -37,17 +37,21 @@ export class ExpensesService {
     return expense;
   }
 
-  async findAll({ year, month }: ParamsListExpensesDto) {
+  async findAll({ year, month, day }: ParamsListExpensesDto) {
     const where = {
       date: {
         gte:
-          year && month
-            ? new Date(parseInt(year), parseInt(month), 1)
-            : undefined,
+          year && month && day
+            ? new Date(parseInt(year), parseInt(month), parseInt(day))
+            : year && month
+              ? new Date(parseInt(year), parseInt(month), 1)
+              : undefined,
         lte:
-          year && month
-            ? new Date(parseInt(year), parseInt(month) + 1, 0)
-            : undefined,
+          year && month && day
+            ? new Date(parseInt(year), parseInt(month), parseInt(day) + 1)
+            : year && month
+              ? new Date(parseInt(year), parseInt(month) + 1, 0)
+              : undefined,
       },
     };
 
