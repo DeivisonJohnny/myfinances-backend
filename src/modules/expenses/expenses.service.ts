@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaClient } from 'generated/prisma/client';
 import ExpensesCreateDto from './dto/expenses-create.dto';
 import { JwtService } from '@nestjs/jwt';
+import ParamsListExpensesDto from './dto/params-list-expense.dto';
 
 @Injectable()
 export class ExpensesService {
@@ -36,7 +37,20 @@ export class ExpensesService {
     return expense;
   }
 
-  async findAll() {
-    return this.prisma.expense.findMany();
+  async findAll({ year, month }: ParamsListExpensesDto) {
+    const where = {
+      date: {
+        gte:
+          year && month
+            ? new Date(parseInt(year), parseInt(month), 1)
+            : undefined,
+        lte:
+          year && month
+            ? new Date(parseInt(year), parseInt(month) + 1, 0)
+            : undefined,
+      },
+    };
+
+    return this.prisma.expense.findMany({ where });
   }
 }
