@@ -11,30 +11,32 @@ export class ExpensesService {
   ) {}
 
   async create(data: ExpensesCreateDto, token: string) {
+    const decodedToken = await this.jwtService.decode(token);
 
-      const decodedToken = await this.jwtService.decode(token);
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: decodedToken.id,
+      },
+    });
 
-      const user = await this.prisma.user.findUnique({
-        where: {
-          id: decodedToken.id,
-        },
-      });
+    if (!user) {
+      throw new UnauthorizedException('Usuario criador não encontrado');
+    }
 
-      if (!user) {
-        throw new UnauthorizedException('Usuario criador não encontrado');
-      }
+    const expense = await this.prisma.expense.create({
+      data: {
+        name: data.name,
+        amount: data.amount,
+        description: data.description,
+        date: new Date(data.date),
+        categoryExpensesId: data.categoryExpensesId,
+        createdBy: { connect: { id: user.id } },
+      },
+    });
+    return expense;
+  }
 
-      const expense = await this.prisma.expense.create({
-        data: {
-          name: data.name,
-          amount: data.amount,
-          description: data.description,
-          date: new Date(data.date),
-          categoryExpensesId: data.categoryExpensesId,
-          createdBy: { connect: { id: user.id } },
-        },
-      });
-      return expense;
-
+  async findAll() {
+    return this.prisma.expense.findMany();
   }
 }
