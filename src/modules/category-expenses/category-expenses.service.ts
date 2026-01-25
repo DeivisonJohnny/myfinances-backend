@@ -8,34 +8,30 @@ export class CategoryExpensesService {
   constructor(readonly prisma: PrismaClient) {}
 
   async create(category: CategoryExpensesDto) {
-    try {
-      const id = Utils.generateIdCategoryExpenses(category.name);
+    const id = Utils.generateIdCategoryExpenses(category.name);
 
-      if (!id) {
-        throw new BadRequestException('Invalid category name');
-      }
-
-      const categoryExpenses = await this.prisma.categoryExpenses.findFirst({
-        where: { id: id },
-      });
-
-      if (categoryExpenses) {
-        throw new BadRequestException('Category already exists');
-      }
-
-      const categoryExpensesCreated = await this.prisma.categoryExpenses.create(
-        {
-          data: {
-            id,
-            name: category.name,
-          },
-        },
-      );
-
-      return categoryExpensesCreated;
-    } catch (error) {
-      Logger.error(error);
+    if (!id) {
+      throw new BadRequestException('Nome da categoria inválido');
     }
+
+    const categoryExpenses = await this.prisma.categoryExpenses.findFirst({
+      where: { id: id },
+    });
+
+    if (categoryExpenses) {
+      throw new BadRequestException('Categoria já existe');
+    }
+
+    const categoryExpensesCreated = await this.prisma.categoryExpenses.create({
+      data: {
+        id,
+        name: category.name,
+        color: category.color,
+        icon: category.icon,
+      },
+    });
+
+    return categoryExpensesCreated;
   }
 
   async getAll() {
