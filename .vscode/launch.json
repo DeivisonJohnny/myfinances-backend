@@ -6,10 +6,17 @@
       "request": "launch",
       "name": "Debug Nest Framework",
       "args": ["${workspaceFolder}/src/main.ts"],
-      "runtimeArgs": ["--nolazy", "-r", "ts-node/register", "-r", "tsconfig-paths/register"],
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+        "-r",
+        "tsconfig-paths/register"
+      ],
       "sourceMaps": true,
       "cwd": "${workspaceFolder}",
-      "protocol": "inspector"
+      "protocol": "inspector",
+      "console": "integratedTerminal" // <-- Adicione esta linha
     }
   ]
 }
