@@ -3,6 +3,7 @@ import { PrismaClient } from 'generated/prisma/client';
 import ExpensesCreateDto from './dto/expenses-create.dto';
 import { JwtService } from '@nestjs/jwt';
 import ParamsListExpensesDto from './dto/params-list-expense.dto';
+import { CurrentUserType } from 'src/types/current-user-type';
 
 @Injectable()
 export class ExpensesService {
@@ -11,17 +12,9 @@ export class ExpensesService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async create(data: ExpensesCreateDto, token: string) {
-    const decodedToken = await this.jwtService.decode(token);
-
-    const user = await this.prisma.user.findUnique({
-      where: {
-        id: decodedToken.id,
-      },
-    });
-
-    if (!user) {
-      throw new UnauthorizedException('Usuario criador não encontrado');
+  async create(data: ExpensesCreateDto, user: CurrentUserType) {
+    if (!user.accountId) {
+      throw new UnauthorizedException('Usuário sem conta vinculada');
     }
 
     const expense = await this.prisma.expense.create({
@@ -32,13 +25,18 @@ export class ExpensesService {
         date: new Date(data.date),
         categoryExpensesId: data.categoryExpensesId,
         createdBy: { connect: { id: user.id } },
+        accountId: user.accountId,
       },
     });
     return expense;
   }
 
-  async findAll({ year, month, day }: ParamsListExpensesDto) {
-    const where = {
+  async findAll(
+    { year, month, day }: ParamsListExpensesDto,
+    accountId: string,
+  ) {
+    const where: any = {
+      accountId,
       date: {
         gte:
           year && month && day

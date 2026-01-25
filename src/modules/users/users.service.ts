@@ -11,7 +11,7 @@ import { hash } from 'bcrypt';
 export default class UsersService {
   constructor(readonly prisma: PrismaClient) {}
 
-  async create(user: CreateUserDto) {
+  async create(user: CreateUserDto, accountId: string) {
     if (user.confirmPassword !== user.password) {
       throw new BadRequestException('As senhas não coincidem');
     }
@@ -33,6 +33,7 @@ export default class UsersService {
         name: user.name,
         email: user.email,
         password: hashedPassword,
+        accountId: accountId,
       },
     });
 

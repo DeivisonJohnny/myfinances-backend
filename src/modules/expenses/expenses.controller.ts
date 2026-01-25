@@ -1,15 +1,9 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Param,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import ExpensesCreateDto from './dto/expenses-create.dto';
 import ParamsListExpensesDto from './dto/params-list-expense.dto';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { CurrentUserType } from 'src/types/current-user-type';
 
 @Controller('expenses')
 export class ExpensesController {
@@ -18,14 +12,16 @@ export class ExpensesController {
   @Post()
   async create(
     @Body() data: ExpensesCreateDto,
-    @Headers('Authorization') token: string,
+    @CurrentUser() user: CurrentUserType,
   ) {
-    const tokenWithoutBearer = token.split(' ')[1];
-    return this.expensesService.create(data, tokenWithoutBearer);
+    return this.expensesService.create(data, user);
   }
 
   @Get()
-  async findAll(@Query() params: ParamsListExpensesDto) {
-    return this.expensesService.findAll(params);
+  async findAll(
+    @Query() params: ParamsListExpensesDto,
+    @CurrentUser() user: CurrentUserType,
+  ) {
+    return this.expensesService.findAll(params, user.accountId);
   }
 }

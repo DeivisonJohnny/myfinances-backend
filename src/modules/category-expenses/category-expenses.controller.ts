@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import CategoryExpensesDto from './dto/category-expenses-create.dto';
 import { CategoryExpensesService } from './category-expenses.service';
+import { CurrentUserType } from 'src/types/current-user-type';
 
 @Controller('category-expenses')
 export class CategoryExpensesController {
@@ -9,12 +11,15 @@ export class CategoryExpensesController {
   ) {}
 
   @Post()
-  async create(@Body() category: CategoryExpensesDto) {
-    return this.categoryExpensesService.create(category);
+  async create(
+    @Body() category: CategoryExpensesDto,
+    @CurrentUser() user: CurrentUserType,
+  ) {
+    return this.categoryExpensesService.create(category, user.accountId);
   }
 
   @Get()
-  async listAll() {
-    return this.categoryExpensesService.getAll();
+  async listAll(@CurrentUser() user: CurrentUserType) {
+    return this.categoryExpensesService.getAll(user.accountId);
   }
 }

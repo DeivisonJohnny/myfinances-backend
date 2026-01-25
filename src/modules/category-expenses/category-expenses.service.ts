@@ -7,15 +7,16 @@ import CategoryExpensesDto from './dto/category-expenses-create.dto';
 export class CategoryExpensesService {
   constructor(readonly prisma: PrismaClient) {}
 
-  async create(category: CategoryExpensesDto) {
-    const id = Utils.generateIdCategoryExpenses(category.name);
-
-    if (!id) {
-      throw new BadRequestException('Nome da categoria inválido');
+  async create(category: CategoryExpensesDto, accountId: string) {
+    if (!accountId) {
+      throw new BadRequestException('Usuário sem conta vinculada');
     }
 
     const categoryExpenses = await this.prisma.categoryExpenses.findFirst({
-      where: { id: id },
+      where: {
+        name: category.name,
+        accountId: accountId,
+      },
     });
 
     if (categoryExpenses) {
@@ -24,18 +25,25 @@ export class CategoryExpensesService {
 
     const categoryExpensesCreated = await this.prisma.categoryExpenses.create({
       data: {
-        id,
         name: category.name,
         color: category.color,
         icon: category.icon,
+        accountId,
       },
     });
 
     return categoryExpensesCreated;
   }
 
-  async getAll() {
-    const categoryExpenses = await this.prisma.categoryExpenses.findMany();
+  async getAll(accountId: string) {
+    if (!accountId) {
+      return [];
+    }
+    const categoryExpenses = await this.prisma.categoryExpenses.findMany({
+      where: {
+        accountId: accountId,
+      },
+    });
 
     return categoryExpenses;
   }
