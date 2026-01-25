@@ -37,4 +37,10 @@ export class CategoryExpensesService {
       Logger.error(error);
     }
   }
+
+  async getAll() {
+    const categoryExpenses = await this.prisma.categoryExpenses.findMany();
+
+    return categoryExpenses;
+  }
 }

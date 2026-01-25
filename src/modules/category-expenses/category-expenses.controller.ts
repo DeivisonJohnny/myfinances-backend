@@ -1,16 +1,20 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import CategoryExpensesDto from './dto/category-expenses.dto';
 import { CategoryExpensesService } from './category-expenses.service';
 
 @Controller('category-expenses')
 export class CategoryExpensesController {
+  constructor(
+    private readonly categoryExpensesService: CategoryExpensesService,
+  ) {}
 
-    constructor(private readonly categoryExpensesService: CategoryExpensesService) {}
+  @Post()
+  async create(@Body() category: CategoryExpensesDto) {
+    return this.categoryExpensesService.create(category);
+  }
 
-
-    @Post()
-    async create(@Body() category: CategoryExpensesDto) {
-        return this.categoryExpensesService.create(category);
-    }
-
+  @Get()
+  async listAll() {
+    return this.categoryExpensesService.getAll();
+  }
 }
