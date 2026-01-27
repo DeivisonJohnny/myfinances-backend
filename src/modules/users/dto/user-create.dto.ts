@@ -4,7 +4,9 @@ import {
   IsString,
   MinLength,
   Matches,
+  IsEnum,
 } from 'class-validator';
+import { Role } from 'generated/prisma/enums';
 
 export default class CreateUserDto {
   @IsString()
@@ -17,14 +19,15 @@ export default class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsEnum(Role, { message: 'Role inválida' })
+  role: Role;
+
+  @IsString()
+  @IsNotEmpty()
   @MinLength(8, { message: 'A senha deve ter no mínimo 8 caracteres' })
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
     message:
       'A senha deve conter pelo menos uma letra maiúscula, uma minúscula e um número',
   })
   password: string;
-
-  @IsString()
-  @IsNotEmpty()
-  confirmPassword: string;
 }

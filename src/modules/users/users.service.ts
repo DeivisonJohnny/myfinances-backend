@@ -12,10 +12,6 @@ export default class UsersService {
   constructor(readonly prisma: PrismaClient) {}
 
   async create(user: CreateUserDto, accountId: string) {
-    if (user.confirmPassword !== user.password) {
-      throw new BadRequestException('As senhas não coincidem');
-    }
-
     const hasUser = await this.prisma.user.findFirst({
       where: {
         email: user.email,
@@ -39,5 +35,9 @@ export default class UsersService {
 
     const { password, ...userWithoutPassword } = newUser;
     return userWithoutPassword;
+  }
+
+  async findAll() {
+    return this.prisma.user.findMany();
   }
 }

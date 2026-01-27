@@ -1,10 +1,9 @@
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import UsersService from './users.service';
 import CreateUserDto from './dto/user-create.dto';
 import { Role, Roles } from 'src/auth/decorators/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { CurrentUserType } from 'src/types/current-user-type';
-
 
 @Controller('users')
 export default class UserController {
@@ -17,5 +16,10 @@ export default class UserController {
     @CurrentUser() user: CurrentUserType,
   ) {
     return this.userService.create(body, user.accountId);
+  }
+  @Get()
+  @Roles(Role.ADMIN)
+  async findAll() {
+    return this.userService.findAll();
   }
 }
