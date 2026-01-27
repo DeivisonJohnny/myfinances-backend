@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import UsersService from './users.service';
 import CreateUserDto from './dto/user-create.dto';
 import { Role, Roles } from 'src/auth/decorators/roles.decorator';
@@ -17,9 +17,19 @@ export default class UserController {
   ) {
     return this.userService.create(body, user.accountId);
   }
+
   @Get()
   @Roles(Role.ADMIN)
   async findAll() {
     return this.userService.findAll();
+  }
+
+  @Delete('/:id')
+  @Roles(Role.ADMIN)
+  async delete(
+    @Param('id') userForDelete: string,
+    @CurrentUser() currentUser: CurrentUserType,
+  ) {
+    return this.userService.delete(userForDelete, currentUser);
   }
 }

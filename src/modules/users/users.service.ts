@@ -6,6 +6,7 @@ import {
 import { PrismaClient } from 'generated/prisma/client'; 
 import CreateUserDto from './dto/user-create.dto';
 import { hash } from 'bcrypt';
+import { CurrentUserType } from 'src/types/current-user-type';
 
 @Injectable()
 export default class UsersService {
@@ -39,5 +40,30 @@ export default class UsersService {
 
   async findAll() {
     return this.prisma.user.findMany();
+  }
+
+  async delete(id: string, currentUser: CurrentUserType) {
+    const hasUser = await this.prisma.user.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!hasUser) {
+      throw new BadRequestException('Usuário não encontrado');
+    }
+
+    if (hasUser.id == currentUser.id) {
+      throw new BadRequestException('Usuário não pode se deletar');
+    }
+
+    const userDeleted = await this.prisma.user.delete({
+      where: {
+        id,
+      },
+    });
+
+    const { password, ...userWithoutPassword } = userDeleted;
+    return userWithoutPassword;
   }
 }
