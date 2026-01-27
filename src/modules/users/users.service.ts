@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaClient } from 'generated/prisma/client'; 
 import CreateUserDto from './dto/user-create.dto';
+import UserUpdateDto from './dto/user-update.dto';
 import { hash } from 'bcrypt';
 import { CurrentUserType } from 'src/types/current-user-type';
 
@@ -65,6 +66,22 @@ export default class UsersService {
     });
 
     const { password, ...userWithoutPassword } = userDeleted;
+    return userWithoutPassword;
+  }
+
+  async update(id: string, user: UserUpdateDto) {
+    if (user.password) {
+      user.password = await hash(user.password, 10);
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: {
+        ...user,
+      },
+    });
+
+    const { password, ...userWithoutPassword } = updatedUser;
     return userWithoutPassword;
   }
 }

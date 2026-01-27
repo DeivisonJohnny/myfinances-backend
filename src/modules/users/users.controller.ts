@@ -1,6 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import UsersService from './users.service';
 import CreateUserDto from './dto/user-create.dto';
+import UserUpdateDto from './dto/user-update.dto';
 import { Role, Roles } from 'src/auth/decorators/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { CurrentUserType } from 'src/types/current-user-type';
@@ -31,5 +40,11 @@ export default class UserController {
     @CurrentUser() currentUser: CurrentUserType,
   ) {
     return this.userService.delete(userForDelete, currentUser);
+  }
+
+  @Patch('/:id')
+  @Roles(Role.ADMIN)
+  async update(@Param('id') id: string, @Body() body: UserUpdateDto) {
+    return this.userService.update(id, body);
   }
 }
