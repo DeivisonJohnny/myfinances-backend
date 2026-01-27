@@ -31,6 +31,7 @@ export default class UsersService {
         email: user.email,
         password: hashedPassword,
         accountId: accountId,
+        role: user.role,
       },
     });
 
