@@ -13,8 +13,8 @@ export class ExpensesService {
   ) {}
 
   async create(data: ExpensesCreateDto, user: CurrentUserType) {
-    if (!user.accountId) {
-      throw new UnauthorizedException('Usuário sem conta vinculada');
+    if (!user.accountId || !user.id) {
+      throw new UnauthorizedException('Usuário sem conta vinculada ou sem id');
     }
 
     const expense = await this.prisma.expense.create({
@@ -24,8 +24,8 @@ export class ExpensesService {
         description: data.description,
         date: new Date(data.date),
         categoryExpensesId: data.categoryExpensesId,
-        createdBy: { connect: { id: user.id } },
         accountId: user.accountId,
+        createdById: user.id,
       },
     });
     return expense;
