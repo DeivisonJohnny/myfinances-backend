@@ -32,11 +32,12 @@ export class ExpensesService {
   }
 
   async findAll(
-    { year, month, day }: ParamsListExpensesDto,
+    { year, month, day, createdById }: ParamsListExpensesDto,
     accountId: string,
   ) {
     const where: any = {
       accountId,
+      createdById,
       date: {
         gte:
           year && month && day

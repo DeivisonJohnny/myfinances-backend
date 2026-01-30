@@ -28,9 +28,8 @@ export default class UserController {
   }
 
   @Get()
-  @Roles(Role.ADMIN)
-  async findAll() {
-    return this.userService.findAll();
+  async findAll(@CurrentUser() user: CurrentUserType) {
+    return this.userService.findByAccount(user.accountId);
   }
 
   @Delete('/:id')

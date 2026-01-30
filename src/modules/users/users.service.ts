@@ -44,6 +44,14 @@ export default class UsersService {
     return this.prisma.user.findMany();
   }
 
+  async findByAccount(accountId: string) {
+    return this.prisma.user.findMany({
+      where: {
+        accountId,
+      },
+    });
+  }
+
   async delete(id: string, currentUser: CurrentUserType) {
     const hasUser = await this.prisma.user.findFirst({
       where: {
