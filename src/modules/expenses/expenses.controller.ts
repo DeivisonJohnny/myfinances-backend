@@ -24,4 +24,12 @@ export class ExpensesController {
   ) {
     return this.expensesService.findAll(params, user.accountId);
   }
+
+  @Get('reports')
+  async getReports(
+    @Query() params: ParamsListExpensesDto,
+    @CurrentUser() user: CurrentUserType,
+  ) {
+    return this.expensesService.getReports(params, user.accountId);
+  }
 }
