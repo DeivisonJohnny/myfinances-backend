@@ -6,7 +6,7 @@ import {
   Matches,
   IsEnum,
 } from 'class-validator';
-import { Role } from 'generated/prisma/enums';
+import { Role } from '@prisma/client';
 
 export default class CreateUserDto {
   @IsString()
