@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client"
+previewFeatures = ["driverAdapters"] 
 }
 
 datasource db {
@@ -66,3 +67,4 @@ model Expense {
   account   Account? @relation(fields: [accountId], references: [id])
   accountId String?
 }
+
