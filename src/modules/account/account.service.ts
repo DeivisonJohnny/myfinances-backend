@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaClient, Role } from 'generated/prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 import AccountCreateDto from './dto/account-create.dto';
 import { hash, hashSync } from 'bcrypt';
 

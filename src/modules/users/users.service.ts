@@ -3,7 +3,7 @@ import {
   BadRequestException, 
   Injectable,
 } from '@nestjs/common';
-import { PrismaClient } from 'generated/prisma/client'; 
+import { PrismaClient } from '@prisma/client'; 
 import CreateUserDto from './dto/user-create.dto';
 import UserUpdateDto from './dto/user-update.dto';
 import { hash } from 'bcrypt';
