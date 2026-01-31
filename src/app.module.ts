@@ -11,6 +11,7 @@ import { AuthGuard } from './auth/guards/auth.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { CategoryExpensesModule } from './modules/category-expenses/category-expenses.module';
 import { ExpensesModule } from './modules/expenses/expenses.module';
+import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ExpensesModule } from './modules/expenses/expenses.module';
     AuthModule,
     CategoryExpensesModule,
     ExpensesModule,
+    AuditLogsModule,
   ],
   controllers: [AppController],
   providers: [

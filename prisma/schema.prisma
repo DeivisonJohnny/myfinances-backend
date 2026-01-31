@@ -17,6 +17,7 @@ model Account {
 
   expenses         Expense[]
   categoryExpenses CategoryExpenses[]
+  auditLogs        AuditLog[]
 }
 
 model User {
@@ -30,6 +31,7 @@ model User {
   account   Account?  @relation(fields: [accountId], references: [id])
   accountId String?
   expenses  Expense[]
+  auditLogs AuditLog[]
 }
 
 model CategoryExpenses {
@@ -67,5 +69,23 @@ model Expense {
 
   account   Account? @relation(fields: [accountId], references: [id])
   accountId String?
+
+  deletedAt DateTime?
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String   
+  entity    String   
+  entityId  String?
+  data      Json?    
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  accountId String
+  account   Account  @relation(fields: [accountId], references: [id])
+  
+  createdAt DateTime @default(now())
 }
 

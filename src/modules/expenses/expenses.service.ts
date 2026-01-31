@@ -28,7 +28,94 @@ export class ExpensesService {
         createdById: user.id,
       },
     });
+
+    await this.prisma.auditLog.create({
+      data: {
+        action: 'CREATE',
+        entity: 'Expense',
+        entityId: expense.id,
+        data: expense as any,
+        userId: user.id,
+        accountId: user.accountId,
+      },
+    });
+
     return expense;
+  }
+
+  async update(
+    id: string,
+    data: Partial<ExpensesCreateDto>,
+    user: CurrentUserType,
+  ) {
+    if (!user.accountId || !user.id) {
+      throw new UnauthorizedException('Usuário sem conta vinculada ou sem id');
+    }
+
+    const existingExpense = await this.prisma.expense.findFirst({
+      where: { id, accountId: user.accountId },
+    });
+
+    if (!existingExpense) {
+      throw new UnauthorizedException(
+        'Despesa não encontrada ou acesso negado',
+      );
+    }
+
+    const updatedExpense = await this.prisma.expense.update({
+      where: { id },
+      data: {
+        ...data,
+        date: data.date ? new Date(data.date) : undefined,
+      },
+    });
+
+    await this.prisma.auditLog.create({
+      data: {
+        action: 'UPDATE',
+        entity: 'Expense',
+        entityId: id,
+        data: { before: existingExpense, after: updatedExpense },
+        userId: user.id,
+        accountId: user.accountId,
+      },
+    });
+
+    return updatedExpense;
+  }
+
+  async delete(id: string, user: CurrentUserType) {
+    if (!user.accountId || !user.id) {
+      throw new UnauthorizedException('Usuário sem conta vinculada ou sem id');
+    }
+
+    const existingExpense = await this.prisma.expense.findFirst({
+      where: { id, accountId: user.accountId },
+    });
+
+    if (!existingExpense) {
+      throw new UnauthorizedException(
+        'Despesa não encontrada ou acesso negado',
+      );
+    }
+
+    const deletedExpense = await this.prisma.expense.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+
+    await this.prisma.auditLog.create({
+      data: {
+        action: 'SOFT_DELETE',
+        entity: 'Expense',
+        entityId: id,
+        data: existingExpense as any,
+        userId: user.id,
+        accountId: user.accountId,
+      },
+    });
+
+    return deletedExpense;
   }
 
   async findAll(
@@ -37,6 +124,7 @@ export class ExpensesService {
   ) {
     const where: any = {
       accountId,
+      deletedAt: null, 
       createdById,
       date: {
         gte:
@@ -60,6 +148,7 @@ export class ExpensesService {
   async getReports({ year, month }: ParamsListExpensesDto, accountId: string) {
     const where: any = {
       accountId,
+      deletedAt: null, 
       date: {
         gte:
           year && month

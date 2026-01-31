@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Put,
+  Delete,
+  Param,
+} from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import ExpensesCreateDto from './dto/expenses-create.dto';
 import ParamsListExpensesDto from './dto/params-list-expense.dto';
@@ -15,6 +24,20 @@ export class ExpensesController {
     @CurrentUser() user: CurrentUserType,
   ) {
     return this.expensesService.create(data, user);
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() data: Partial<ExpensesCreateDto>,
+    @CurrentUser() user: CurrentUserType,
+  ) {
+    return this.expensesService.update(id, data, user);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string, @CurrentUser() user: CurrentUserType) {
+    return this.expensesService.delete(id, user);
   }
 
   @Get()
