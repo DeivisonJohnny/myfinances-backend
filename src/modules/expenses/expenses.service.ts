@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import ExpensesCreateDto from './dto/expenses-create.dto';
 import { JwtService } from '@nestjs/jwt';
 import ParamsListExpensesDto from './dto/params-list-expense.dto';
-import { CurrentUserType } from 'src/types/current-user-type';
+import { CurrentUserType } from '../../types/current-user-type';
 
 @Injectable()
 export class ExpensesService {

@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import AccountCreateDto from './dto/account-create.dto';
 import { AccountService } from './account.service';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { Public } from '../../auth/decorators/public.decorator';
 
 
 

@@ -7,7 +7,7 @@ import { PrismaClient } from '@prisma/client';
 import CreateUserDto from './dto/user-create.dto';
 import UserUpdateDto from './dto/user-update.dto';
 import { hash } from 'bcrypt';
-import { CurrentUserType } from 'src/types/current-user-type';
+import { CurrentUserType } from '../../types/current-user-type';
 
 @Injectable()
 export default class UsersService {

@@ -10,9 +10,9 @@ import {
 import UsersService from './users.service';
 import CreateUserDto from './dto/user-create.dto';
 import UserUpdateDto from './dto/user-update.dto';
-import { Role, Roles } from 'src/auth/decorators/roles.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { CurrentUserType } from 'src/types/current-user-type';
+import { Role, Roles } from '../../auth/decorators/roles.decorator';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { CurrentUserType } from '../../types/current-user-type';
 
 @Controller('users')
 export default class UserController {
